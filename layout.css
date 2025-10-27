@@ -1,0 +1,28 @@
+.layout-default {
+  display: grid;
+  grid-template-rows: auto 1fr auto;     /* top / client / bottom */
+  grid-template-columns: auto 1fr auto;  /* left / client / right */
+  grid-template-areas:
+    "top    top    top"
+    "left   client right"
+    "bottom bottom bottom";
+}
+
+/* Default Alignment */
+.layout-default > * {
+  grid-area: var(--align, none);
+  position: var(--align) == 'none' ? absolute : static;
+}
+
+/* Grid Areas */
+.layout-default > * {
+  /* Mapping via Custom Property */
+  /* Werte: top / bottom / left / right / client / none */
+}
+
+.layout-default > *[style*="--align: top"]    { grid-area: top; }
+.layout-default > *[style*="--align: bottom"] { grid-area: bottom; }
+.layout-default > *[style*="--align: left"]   { grid-area: left; }
+.layout-default > *[style*="--align: right"]  { grid-area: right; }
+.layout-default > *[style*="--align: client"] { grid-area: client; }
+.layout-default > *[style*="--align: none"]   { position: absolute; }

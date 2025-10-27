@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layout-Demo mit --align</title>
+<link rel="stylesheet" href="layout.css">
+<style>
+
+  #foo {
+   --align: right;
+   background-color: maroon;
+  }
+
+  @media (min-width: 768px) {
+   #foo {
+    --align: left;
+    background-color: black;
+   }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="layout-default">
+  <header style="--align: top; background-color: green">Header</header>
+  <nav style="--align: left; background-color: yellow">Sidebar</nav>
+  <main style="--align: client; background-color: blue">
+
+   <div class="layout-default">
+    <div style="--align: left; background-color: red">Test</div>
+    <div style="--align: right; background-color: white">Test</div>
+    <div style="--align: none; left: 20px">None</div>
+   </div>
+
+  </main>
+  <aside id="foo">Sidebar</aside>
+  <footer style="--align: bottom; background-color: violet">Footer</footer>
+</div>
+
+
+</body>
+</html>
