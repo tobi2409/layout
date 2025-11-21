@@ -7,6 +7,11 @@
 <link rel="stylesheet" href="layout.css">
 <style>
 
+    #test-id {
+        --align: right;
+        background-color: white;
+    }
+
   #foo {
    --align: right;
    background-color: maroon;
@@ -23,15 +28,16 @@
 </head>
 <body>
 
-<div class="layout-default">
+<div class="frame">
   <header style="--align: top; background-color: green">Header</header>
   <nav style="--align: left; background-color: yellow">Sidebar</nav>
   <main style="--align: client; background-color: blue">
 
-   <div class="layout-default">
+   <div class="frame">
     <div style="--align: left; background-color: red">Test</div>
-    <div style="--align: right; background-color: white">Test</div>
-    <div style="--align: none; left: 20px">None</div>
+    <div id="test-id">Test</div>
+    <div style="position: absolute; left: 100px">None</div>
+    <div style="position: absolute; left: 50px">None2</div>
    </div>
 
   </main>
