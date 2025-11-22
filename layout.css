@@ -1,12 +1,16 @@
 .frame {
     position: relative;
     display: grid;
-    grid-template-rows: auto 1fr auto;     /* top / client / bottom */
-    grid-template-columns: auto 1fr auto;  /* left / client / right */
+    grid-template-rows: auto auto auto 1fr auto auto auto;     /* top / client / bottom */
+    grid-template-columns: auto auto auto 1fr auto auto auto;  /* left / client / right */
     grid-template-areas:
-        "top    top    top"
-        "left   client right"
-        "bottom bottom bottom";
+        "top        top         top         top         top         top         top"
+        "top-2      top-2       top-2       top-2       top-2       top-2       top-2"
+        "top-3      top-3       top-3       top-3       top-3       top-3       top-3"
+        "left       left-2      left-3      client      right       right-2     right-3"
+        "bottom     bottom      bottom      bottom      bottom      bottom      bottom"
+        "bottom-2   bottom-2    bottom-2    bottom-2    bottom-2    bottom-2    bottom-2"
+        "bottom-3   bottom-3    bottom-3    bottom-3    bottom-3    bottom-3    bottom-3";
 }
 
 .frame > * {
