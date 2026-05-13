@@ -7,51 +7,117 @@
 <link rel="stylesheet" href="layout.css">
 <style>
 
-    #test-id {
-        --align: right;
-        background-color: white;
-    }
-
-  #foo {
-   --align: right;
-   background-color: maroon;
+  body {
+    font-family: sans-serif;
   }
 
-  @media (min-width: 768px) {
-   #foo {
-    --align: left;
-    background-color: black;
-   }
+  .demo-frame {
+    min-height: 320px;
+    outline: 1px solid #000;
+  }
+
+  .panel {
+    padding: 4px 8px;
+    outline: 1px solid #aaa;
+    font-size: 0.85rem;
+  }
+
+  /* --- Dashboard-Ebenen --- */
+
+  .demo-frame > header         { --align: top;      background: #cce; }
+  .demo-frame > .searchbar     { --align: top-2;    background: #ddf; }
+  .demo-frame > .contextbar    { --align: top-3;    background: #eef; }
+
+  .demo-frame > nav            { --align: left;     background: #cec; }
+  .demo-frame > .favorites     { --align: left-2;   background: #dfd; }
+
+  .demo-frame > main           { --align: client;   background: #fff; }
+  .demo-frame > aside.inspector{ --align: right;    background: #fcc; }
+  .demo-frame > footer         { --align: bottom;   background: #cce; }
+  .demo-frame > .statusline    { --align: bottom-2; background: #ddf; }
+
+  /* --- Hauptinhalt-Ebenen --- */
+
+  main > .breadcrumbs   { --align: top;    background: #ffe; }
+  main > .toolbar       { --align: top-2;  background: #ffd; }
+  main > section        { --align: client; background: #f9f9f9; }
+  main > .actionbar     { --align: bottom; background: #ffe; }
+
+  /* --- Inhaltsschicht-Ebenen --- */
+
+  main > section > .article-header { --align: top;    background: #eee; }
+  main > section > .chapters       { --align: left;   background: #ddd; }
+  main > section > article         { --align: client; background: #fff; }
+  main > section > .notes          { --align: right;  background: #fdd; }
+  main > section > .status         { --align: bottom; background: #dfd; }
+
+  /* --- Mobil (< 600px): nur wesentliche Bereiche, alles gestapelt --- */
+
+  @media (max-width: 599px) {
+    /* Seitenleisten und Nebenelemente ausblenden */
+    .demo-frame > .searchbar,
+    .demo-frame > .contextbar,
+    .demo-frame > .favorites,
+    .demo-frame > aside.inspector,
+    .demo-frame > .statusline,
+    main > .toolbar,
+    main > section > .chapters,
+    main > section > .notes    { display: none; }
+
+    /* Navigation unter den Header */
+    .demo-frame > nav          { --align: top-2; }
+
+    /* Aktionsleiste oben im main statt unten */
+    main > .actionbar          { --align: top-3; }
+  }
+
+  /* --- Tablet (600px – 1023px): Inspector ausblenden, Kontextleiste erhalten --- */
+
+  @media (600px <= width <= 1023px) {
+    .demo-frame > .contextbar,
+    .demo-frame > .statusline,
+    .demo-frame > aside.inspector { display: none; }
+  }
+
+  /* --- Desktop (≥ 1024px): Vollansicht, alles sichtbar --- */
+
+  @media (min-width: 1024px) {
+    /* alles wie definiert, keine Änderungen nötig */
   }
 
 </style>
 </head>
 <body>
 
-<div class="frame">
-  <header style="--align: top; background-color: green">Header</header>
-  <nav style="--align: left; background-color: yellow">Sidebar</nav>
-  <main style="--align: client; background-color: blue">
+<h2>Mehrschichtiges Dashboard</h2>
 
-   <div class="frame">
-    <div style="--align: left; background-color: red">Test</div>
-    <div id="test-id">Test</div>
-    <div style="position: absolute; left: 100px">None</div>
-    <div style="position: absolute; left: 50px">None2</div>
-   </div>
+  <div class="frame demo-frame">
+    <header class="panel">App Header</header>
+    <div class="panel searchbar">Suchleiste / Filter</div>
+    <div class="panel contextbar">Kontextleiste</div>
 
-  </main>
-  <aside id="foo">Sidebar</aside>
-  <footer style="--align: bottom; background-color: violet">Footer</footer>
-</div>
+    <nav class="panel">Navigation</nav>
+    <aside class="panel favorites">Favoriten</aside>
 
-<div class="frame" style="width: 500px; height: 500px; background-color: orange;">
-  <div style="--align: left; width: 100px; background-color: violet;"></div>
-  <div class="frame" style="--align: right; width: 100px; background-color: blue;">
-    <div style="--align: bottom; height: 20px; background-color: black;"></div>
+    <main class="frame">
+      <div class="panel breadcrumbs">Breadcrumbs</div>
+      <div class="panel toolbar">Werkzeugleiste</div>
+
+      <section class="frame">
+        <div class="panel article-header">Artikelkopf</div>
+        <div class="panel chapters">Kapitel</div>
+        <article class="panel">Inhaltsschicht</article>
+        <div class="panel notes">Notizen</div>
+        <div class="panel status">Status</div>
+      </section>
+
+      <div class="panel actionbar">Aktionsleiste</div>
+    </main>
+
+    <aside class="panel inspector">Inspector</aside>
+    <footer class="panel">Footer</footer>
+    <div class="panel statusline">Statuszeile</div>
   </div>
-</div>
-
 
 </body>
 </html>
