@@ -96,6 +96,15 @@ For dynamic lists or freely flowing rows, `.frame` is not the best level of abst
 - Flexbox for lists, toolbars, or rows
 - `position: absolute` for overlays or freely positioned elements
 
+## Possible future direction
+
+It might be worth considering a switch from CSS Grid to Flexbox as the underlying model:
+
+- `top` / `bottom` → `flex-direction: column` (children stack vertically)
+- `left` / `right` → `flex-direction: row` (children stack horizontally)
+
+This would naturally handle multiple children with the same alignment without overlapping, and without needing levels like `top-2` or `left-3`. Dynamic lists and reordering would also become easier. The trade-off is that the current single-class approach with `--align` would need to be rethought, since Flexbox distributes all children at once rather than placing them into named areas.
+
 ## Limitations
 
 - Multiple elements with exactly the same `--align` overlap.
