@@ -3,6 +3,7 @@
   "version": "0.5.0",
   "description": "Tiny CSS frame layout using named grid areas and the --align property",
   "license": "MIT",
+  "main": "src/layout.css",
   "files": [
     "src",
     "README.md"
@@ -36,5 +37,8 @@
     "zero-js",
     "lightweight",
     "minimal"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
