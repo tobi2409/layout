@@ -1,0 +1,40 @@
+{
+  "name": "@tobi2409/layout",
+  "version": "0.5.0",
+  "description": "Tiny CSS frame layout using named grid areas and the --align property",
+  "license": "MIT",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "style": "src/layout.css",
+  "keywords": [
+    "css",
+    "css-library",
+    "layout",
+    "grid",
+    "css-grid",
+    "grid-layout",
+    "frame",
+    "frame-layout",
+    "page-layout",
+    "application-layout",
+    "dashboard-layout",
+    "shell-layout",
+    "ui",
+    "frontend",
+    "responsive",
+    "align",
+    "grid-area",
+    "named-areas",
+    "client-area",
+    "top",
+    "bottom",
+    "left",
+    "right",
+    "utility-css",
+    "zero-js",
+    "lightweight",
+    "minimal"
+  ]
+}
