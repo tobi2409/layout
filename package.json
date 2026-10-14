@@ -1,6 +1,6 @@
 {
   "name": "@tobi2409/layout",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Build-time HTML frame layout generator using CSS Grid",
   "license": "MIT",
   "type": "module",

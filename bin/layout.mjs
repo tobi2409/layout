@@ -36,6 +36,11 @@ function walk(node, visitor) {
     for (const child of node.childNodes ?? []) {
         walk(child, visitor)
     }
+
+    // parse5 speichert den Inhalt von <template> in einem separaten DocumentFragment.
+    if (node.content) {
+        walk(node.content, visitor)
+    }
 }
 
 function parseAlignment(value, source) {

@@ -39,6 +39,23 @@ test('recomputes a frame inside a media query', () => {
     assert.match(result.css, /@media[\s\S]*grid-template-columns: 1fr/)
 });
 
+test('processes frames inside template elements', () => {
+    const result = compileHtml(`<!doctype html><html><head></head><body>
+        <template id="app-template">
+            <div class="frame">
+                <div @align="left">Left</div>
+                <div @align="right">Right</div>
+            </div>
+        </template>
+    </body></html>`, 'template.html')
+
+    assert.match(result.html, /<template id="app-template">[\s\S]*data-layout-frame="1"/)
+    assert.match(result.html, /data-layout-item="1-1" data-layout-align="left"/)
+    assert.match(result.html, /data-layout-item="1-2" data-layout-align="right"/)
+    assert.doesNotMatch(result.html, /@align/)
+    assert.match(result.css, /grid-template-columns: auto 1fr auto/)
+})
+
 test('does not add the generated stylesheet twice', () => {
     const first = compileHtml('<!doctype html><html><head></head><body></body></html>', 'app.html')
     const second = compileHtml(first.html, 'app.html')
