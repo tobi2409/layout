@@ -1,117 +1,122 @@
 # Layout
 
-A small Delphi-like layout system based on CSS Grid.
+A small build-time layout system based on CSS Grid. Frame children declare their position with an `@align` HTML attribute; the CLI parses the document and generates the required tracks and placements.
 
-The idea: a container with `.frame` defines fixed areas such as `top`, `left`, `client`, or `bottom`. Child elements are assigned to an area through the CSS custom property `--align`.
+## Installation
 
-## Goal
-
-The system is meant to enable simple, readable user interfaces without scattering many utility classes throughout the HTML.
-
-Example:
-
-```html
-<div class="frame">
-	<header style="--align: top;">Header</header>
-	<nav style="--align: left;">Navigation</nav>
-	<main style="--align: client;">Inhalt</main>
-	<aside style="--align: right;">Inspector</aside>
-	<footer style="--align: bottom;">Footer</footer>
-</div>
+```sh
+npm install @tobi2409/layout
 ```
 
 ## Usage
 
-Include `layout.css`:
+Add the `frame` class to a container and align its direct children:
 
 ```html
-<link rel="stylesheet" href="layout.css">
+<!doctype html>
+<html lang="de">
+<head>
+	<meta charset="utf-8">
+	<title>Application</title>
+</head>
+<body>
+	<div class="frame">
+		<header @align="top">Header</header>
+		<nav @align="left">Navigation</nav>
+		<main @align="client">Content</main>
+		<aside @align="right">Inspector</aside>
+		<footer @align="bottom">Status</footer>
+	</div>
+</body>
+</html>
 ```
 
-Then create a container with `.frame` and place its direct child elements using `--align`.
+Process the HTML file:
 
-## Supported align values
+```sh
+npx layout path/to/application.html
+```
 
-### Horizontal / vertical
+The output directory defaults to `generated`. Use `--output-dir` (or `-o`) to choose another name:
 
-- `top`
-- `top-2`
-- `top-3`
-- `top-4`
-- `top-5`
-- `left`
-- `left-2`
-- `left-3`
-- `left-4`
-- `left-5`
-- `client`
-- `right`
-- `right-2`
-- `right-3`
-- `right-4`
-- `right-5`
-- `bottom`
-- `bottom-2`
-- `bottom-3`
-- `bottom-4`
-- `bottom-5`
+```sh
+npx layout path/to/application.html --output-dir dist
+```
 
-`client` is the flexible main area and uses the remaining space.
+For `path/to/application.html`, the command leaves the source unchanged and writes these files:
 
-## Basic principle
+```text
+path/to/generated/application.html
+path/to/generated/application-layout.css
+path/to/generated/application-layout.js
+```
 
-- `top...` and `bottom...` occupy full rows.
-- `left...` and `right...` occupy columns next to the content.
-- `client` is placed in the center.
-- Multiple `.frame` containers can be nested.
-
-## Nesting example
+The generated HTML contains `data-layout-*` attributes instead of `@align`, so it is valid HTML. It also receives the stylesheet and runtime references in its `head` unless they already exist:
 
 ```html
-<div class="frame" style="height: 300px;">
-	<header style="--align: top;">Header</header>
-
-	<main class="frame" style="--align: client;">
-		<div style="--align: top;">Toolbar</div>
-		<section style="--align: client;">Inhalt</section>
-		<div style="--align: bottom;">Status</div>
-	</main>
-</div>
+<link rel="stylesheet" href="application-layout.css">
+<script type="module" src="application-layout.js"></script>
 ```
 
-## When this works well
+Run the command again whenever the frame structure or an `@align` value changes. It overwrites both generated files deterministically without modifying the source document.
 
-Suitable for:
+## Alignments
 
-- app layouts
-- admin interfaces
-- classic desktop-like UI structures
-- clearly separated areas such as header, sidebar, content, and footer
+- `top`: adds an `auto` row before the flexible content row
+- `bottom`: adds an `auto` row after the flexible content row
+- `left`: adds an `auto` column before the flexible content column
+- `right`: adds an `auto` column after the flexible content column
+- `client`: occupies the central `1fr` row and column
 
-## When to combine it with something else
+Repeated values are placed in document order. For example, three `top` children produce `auto auto auto 1fr`; numbered values such as `top-2` are no longer needed.
 
-For dynamic lists or freely flowing rows, `.frame` is not the best level of abstraction. In those cases, a combination is usually better:
+Only direct children of a frame are considered. Frames can be nested without their children affecting the parent frame.
 
-- `.frame` for the coarse page structure
-- Flexbox for lists, toolbars, or rows
-- `position: absolute` for overlays or freely positioned elements
+## Responsive alignment
 
-## Possible future direction
+Use a JSON object for breakpoint-specific alignment. Because JSON uses double quotes, wrap the HTML attribute in single quotes:
 
-It might be worth considering a switch from CSS Grid to Flexbox as the underlying model:
+```html
+<nav @align='{
+	"default": "left",
+	"max-width: 599px": "top",
+	"min-width: 1200px and max-height: 800px": "right"
+}'>Navigation</nav>
+```
 
-- `top` / `bottom` → `flex-direction: column` (children stack vertically)
-- `left` / `right` → `flex-direction: row` (children stack horizontally)
+`default` is optional. Every other key becomes a media query. Feature lists can be written without surrounding parentheses; the generator emits valid CSS such as:
 
-This would naturally handle multiple children with the same alignment without overlapping, and without needing levels like `top-2` or `left-3`. Dynamic lists and reordering would also become easier. The trade-off is that the current single-class approach with `--align` would need to be rethought, since Flexbox distributes all children at once rather than placing them into named areas.
+```css
+@media (min-width: 1200px) and (max-height: 800px) { /* ... */ }
+```
 
-## Limitations
+For each query, all tracks and placements in the affected frame are recalculated. When multiple media queries match simultaneously, normal CSS source order determines the result.
 
-- Multiple elements with exactly the same `--align` overlap.
-- That is why there are levels such as `top-2` or `left-3`.
-- The number of levels is currently intentionally limited to 5 per direction.
+## Runtime API
 
-## Files
+The generated runtime exposes `setAlign` globally. Pass a generated layout element and its new alignment:
 
-- [layout.css](layout.css): core of the layout system
-- [demo.html](demo.html): simple demo example
+```js
+const inspector = document.querySelector(".inspector");
+setAlign(inspector, "bottom");
+```
+
+`setAlign` updates the element's alignment, recalculates its parent frame's `grid-template-rows` and `grid-template-columns`, and sets `grid-row` and `grid-column` for every aligned child. The runtime value overrides generated responsive placement for that frame until the page is reloaded.
+
+The API can also be imported directly:
+
+```js
+import { setAlign } from "@tobi2409/layout/runtime";
+```
+
+Supported runtime values are `top`, `right`, `bottom`, `left`, and `client`. The element must be a direct generated child of a frame.
+
+## Development
+
+```sh
+npm test
+node bin/layout.mjs examples/demo/demo.html
+node bin/layout.mjs examples/list/list.html
+```
+
+The Todo example in `examples/list/list.html` demonstrates how newly appended elements are registered and positioned with `setAlign(todo, "top")`.

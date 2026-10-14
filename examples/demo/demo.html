@@ -1,0 +1,104 @@
+<!DOCTYPE html><html lang="de"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layout-Demo mit @align</title>
+<style>
+
+  body {
+    font-family: sans-serif;
+  }
+
+  .demo-frame {
+    min-height: 320px;
+    outline: 1px solid #000;
+  }
+
+  .panel {
+    padding: 4px 8px;
+    outline: 1px solid #aaa;
+    font-size: 0.85rem;
+  }
+
+  .demo-frame > header          { background: #cce; }
+  .demo-frame > .searchbar      { background: #ddf; }
+  .demo-frame > .contextbar     { background: #eef; }
+  .demo-frame > nav             { background: #cec; }
+  .demo-frame > .favorites      { background: #dfd; }
+  .demo-frame > main            { background: #fff; }
+  .demo-frame > aside.inspector { background: #fcc; }
+  .demo-frame > footer          { background: #cce; }
+  .demo-frame > .statusline     { background: #ddf; }
+  main > .breadcrumbs           { background: #ffe; }
+  main > .toolbar               { background: #ffd; }
+  main > section                { background: #f9f9f9; }
+  main > .actionbar             { background: #ffe; }
+  main > section > .article-header { background: #eee; }
+  main > section > .chapters       { background: #ddd; }
+  main > section > article         { background: #fff; }
+  main > section > .notes          { background: #fdd; }
+  main > section > .status         { background: #dfd; }
+
+  /* --- Mobil (< 600px): nur wesentliche Bereiche, alles gestapelt --- */
+
+  @media (max-width: 599px) {
+    /* Seitenleisten und Nebenelemente ausblenden */
+    .demo-frame > .searchbar,
+    .demo-frame > .contextbar,
+    .demo-frame > .favorites,
+    .demo-frame > aside.inspector,
+    .demo-frame > .statusline,
+    main > .toolbar,
+    main > section > .chapters,
+    main > section > .notes    { display: none; }
+
+  }
+
+  /* --- Tablet (600px – 1023px): Inspector ausblenden, Kontextleiste erhalten --- */
+
+  @media (600px <= width <= 1023px) {
+    .demo-frame > .contextbar,
+    .demo-frame > .statusline,
+    .demo-frame > aside.inspector { display: none; }
+  }
+
+  /* --- Desktop (≥ 1024px): Vollansicht, alles sichtbar --- */
+
+  @media (min-width: 1024px) {
+    /* alles wie definiert, keine Änderungen nötig */
+  }
+
+</style>
+<body>
+
+<h2>Mehrschichtiges Dashboard</h2>
+
+  <div class="frame demo-frame">
+    <header class="panel" @align="top">App Header</header>
+    <div class="panel searchbar" @align="top">Suchleiste / Filter</div>
+    <div class="panel contextbar" @align="top">Kontextleiste</div>
+
+    <nav class="panel" @align='{"default":"left","max-width: 599px":"top"}'>Navigation</nav>
+    <aside class="panel favorites" @align="left">Favoriten</aside>
+
+    <main class="frame" @align="client">
+      <div class="panel breadcrumbs" @align="top">Breadcrumbs</div>
+      <div class="panel toolbar" @align="top">Werkzeugleiste</div>
+
+      <section class="frame" @align="client">
+        <div class="panel article-header" @align="top">Artikelkopf</div>
+        <div class="panel chapters" @align="left">Kapitel</div>
+        <article class="panel" @align="client">Inhaltsschicht</article>
+        <div class="panel notes" @align="right">Notizen</div>
+        <div class="panel status" @align="bottom">Status</div>
+      </section>
+
+      <div class="panel actionbar" @align='{"default":"bottom","max-width: 599px":"top"}'>Aktionsleiste</div>
+    </main>
+
+    <aside class="panel inspector" @align="right">Inspector</aside>
+    <footer class="panel" @align="bottom">Footer</footer>
+    <div class="panel statusline" @align="bottom">Statuszeile</div>
+  </div>
+
+
+</body></html>

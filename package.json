@@ -1,14 +1,23 @@
 {
   "name": "@tobi2409/layout",
   "version": "0.5.0",
-  "description": "Tiny CSS frame layout using named grid areas and the --align property",
+  "description": "Build-time HTML frame layout generator using CSS Grid",
   "license": "MIT",
-  "main": "src/layout.css",
+  "type": "module",
+  "exports": {
+    "./runtime": "./src/layout.js"
+  },
+  "bin": {
+    "layout": "bin/layout.mjs"
+  },
   "files": [
+    "bin",
     "src",
     "README.md"
   ],
-  "style": "src/layout.css",
+  "scripts": {
+    "test": "node --test"
+  },
   "keywords": [
     "css",
     "css-library",
@@ -26,8 +35,8 @@
     "frontend",
     "responsive",
     "align",
-    "grid-area",
-    "named-areas",
+    "html-attributes",
+    "build-time",
     "client-area",
     "top",
     "bottom",
@@ -40,5 +49,8 @@
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "parse5": "^8.0.1"
   }
 }

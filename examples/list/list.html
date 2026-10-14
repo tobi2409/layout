@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Layout Todo-Liste</title>
+    <style>
+        body {
+            max-width: 480px;
+            margin: 32px auto;
+            padding: 0 16px;
+            font-family: sans-serif;
+        }
+
+        form {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        #todo-input {
+            flex: 1;
+        }
+
+        .todo-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            height: 300px;
+            border: 1px solid black;
+        }
+
+        .todo-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Todo-Liste</h1>
+
+        <form id="todo-form">
+            <input id="todo-input" name="todo" type="text" placeholder="Neue Aufgabe" autocomplete="off" required>
+            <button type="submit">Hinzufügen</button>
+        </form>
+
+        <ul class="frame todo-list" id="todo-list">
+            <li class="todo-item" @align="bottom">Layout-Dokumentation lesen</li>
+        </ul>
+    </main>
+
+    <script>
+        const form = document.querySelector('#todo-form')
+        const input = document.querySelector('#todo-input')
+        const list = document.querySelector('#todo-list')
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault()
+
+            const text = input.value.trim()
+
+            if (!text) {
+                return
+            }
+
+            const todo = document.createElement('li')
+            todo.className = 'todo-item'
+            todo.textContent = text
+
+            list.append(todo)
+
+            setAlign(todo, 'bottom')
+
+            form.reset()
+            input.focus()
+        })
+    </script>
+</body>
+</html>
