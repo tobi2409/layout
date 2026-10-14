@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
-import { compileFile, compileHtml } from '../bin/layout.mjs'
+import { compileFile, compileHtml, compilePath } from '../bin/layout.mjs'
 
 test('generates tracks and placements in document order', () => {
     const result = compileHtml(`<!doctype html><html><head></head><body>
@@ -79,6 +79,35 @@ test('writes files to a custom output directory', async () => {
         assert.equal(result.htmlFile, join(directory, 'dist', 'app.html'))
         assert.equal(result.cssFile, join(directory, 'dist', 'app-layout.css'))
         assert.equal(result.runtimeFile, join(directory, 'dist', 'app-layout.js'))
+    } finally {
+        await rm(directory, { recursive: true, force: true })
+    }
+})
+
+test('recursively compiles HTML files while skipping output directories', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'layout-'))
+    const nestedDirectory = join(directory, 'nested')
+    const generatedDirectory = join(nestedDirectory, 'generated')
+    const source = '<!doctype html><html><head></head><body></body></html>'
+
+    try {
+        await mkdir(generatedDirectory, { recursive: true })
+        await Promise.all([
+            writeFile(join(directory, 'index.html'), source),
+            writeFile(join(nestedDirectory, 'page.htm'), source),
+            writeFile(join(directory, 'notes.txt'), source),
+            writeFile(join(generatedDirectory, 'old.html'), source)
+        ])
+
+        const results = await compilePath(directory)
+
+        assert.deepEqual(
+            results.map((result) => result.htmlFile).sort(),
+            [
+                join(directory, 'generated', 'index.html'),
+                join(nestedDirectory, 'generated', 'page.htm')
+            ].sort()
+        )
     } finally {
         await rm(directory, { recursive: true, force: true })
     }

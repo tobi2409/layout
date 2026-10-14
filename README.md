@@ -37,6 +37,12 @@ Process the HTML file:
 npx layout path/to/application.html
 ```
 
+You can also pass a directory. It is searched recursively for `.html` and `.htm` files; output directories are skipped:
+
+```sh
+npx layout path/to/pages
+```
+
 The output directory defaults to `generated`. Use `--output-dir` (or `-o`) to choose another name:
 
 ```sh

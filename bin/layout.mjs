@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, readdir, realpath, stat, writeFile } from 'node:fs/promises'
 import { basename, dirname, extname, join } from 'node:path'
-import { pathToFileURL } from 'node:url'
+import { fileURLToPath } from 'node:url'
 import { parse, serialize } from 'parse5'
 
 const ALIGNMENTS = new Set(['top', 'right', 'bottom', 'left', 'client'])
@@ -313,13 +313,40 @@ export async function compileFile(fileName, outputDirectoryName = 'generated') {
     return { ...result, htmlFile, cssFile, runtimeFile }
 }
 
+async function findHtmlFiles(directory, outputDirectoryName) {
+    const files = []
+
+    for (const entry of await readdir(directory, { withFileTypes: true })) {
+        const entryPath = join(directory, entry.name)
+
+        if (entry.isDirectory()) {
+            if (entry.name !== outputDirectoryName) {
+                files.push(...await findHtmlFiles(entryPath, outputDirectoryName))
+            }
+        } else if (entry.isFile() && /\.html?$/i.test(entry.name)) {
+            files.push(entryPath)
+        }
+    }
+
+    return files
+}
+
+export async function compilePath(inputPath, outputDirectoryName = 'generated') {
+    const input = await stat(inputPath)
+    const files = input.isDirectory()
+        ? await findHtmlFiles(inputPath, outputDirectoryName)
+        : [inputPath]
+
+    return Promise.all(files.map((fileName) => compileFile(fileName, outputDirectoryName)))
+}
+
 async function main() {
     const args = process.argv.slice(2)
     const fileName = args[0]
     let outputDirectoryName = 'generated'
 
     if (!fileName) {
-        console.error('Usage: layout <document.html> [--output-dir <name>]')
+        console.error('Usage: layout <document.html|directory> [--output-dir <name>]')
         process.exitCode = 1
         return
     }
@@ -339,14 +366,19 @@ async function main() {
         }
     }
 
-    const result = await compileFile(fileName, outputDirectoryName)
+    const results = await compilePath(fileName, outputDirectoryName)
 
-    console.log(`Generated ${result.htmlFile}`)
-    console.log(`Generated ${result.cssFile}`)
-    console.log(`Generated ${result.runtimeFile}`)
+    for (const result of results) {
+        console.log(`Generated ${result.htmlFile}`)
+        console.log(`Generated ${result.cssFile}`)
+        console.log(`Generated ${result.runtimeFile}`)
+    }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+const isMainModule = process.argv[1]
+    && await realpath(process.argv[1]) === await realpath(fileURLToPath(import.meta.url))
+
+if (isMainModule) {
     main().catch((error) => {
         console.error(error.message)
         process.exitCode = 1
